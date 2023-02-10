@@ -24,8 +24,7 @@ def spsa(x0,func,bounds=None,alpha=0.602,gamma=0.101,deltax_0=0.1,a=None,a_min=1
         gsum=0.0
         for m in range(niter):
             delta=scipy.add(2*scipy.floor(scipy.random.uniform(0,2,p)),-1)
-                
-            # print "delta = ",delta
+
             xp=x+ck*delta
             xm=x-ck*delta
             if dynamic_system == True:
@@ -42,7 +41,7 @@ def spsa(x0,func,bounds=None,alpha=0.602,gamma=0.101,deltax_0=0.1,a=None,a_min=1
     Xmin=list()
     if bounds is None:
         bounds = [(-10.0,10.0)] * Npar
-        print 'No bounds specified. Default:(-10,10).'
+        print ('No bounds specified. Default:(-10,10).')
     if len(bounds) != Npar:
         raise ValueError('Number of parameters Npar != length of bounds')
     for m in range(0,Npar):
@@ -58,7 +57,7 @@ def spsa(x0,func,bounds=None,alpha=0.602,gamma=0.101,deltax_0=0.1,a=None,a_min=1
     y0=func(x0,*args); Nfeval=Nfeval+1
     mem=numpy.ones(memsize)*y0
     x=x0.copy()
-    print 'initial objective value = ',y0
+    print ('initial objective value = ',y0)
     x_best=x0.copy();y_best=y0; #y_ave=y0; y_max=y0
     for k in range(0,maxiter):
         if dynamic_system == True:
@@ -69,20 +68,9 @@ def spsa(x0,func,bounds=None,alpha=0.602,gamma=0.101,deltax_0=0.1,a=None,a_min=1
             if a == None:
                 a=deltax_0*(A+1)**alpha/(min(abs(ghat[:Npar])))
             a_ini=a
-            print 'ghat0 = ',ghat[:]        
+            print ('ghat0 = ',ghat[:])        
         ak=a/(k+1+A)**alpha
-        #y_ave_old=y_ave
-        #y_ave=(k+1)*y_ave/(k+2)+max(yp,ym)/(k+2)
-
-        #delta=scipy.add(2*scipy.floor(scipy.random.uniform(0,2,p)),-1)
-        #xp=x+ck*delta
-        #xm=x-ck*delta
-        #yp=func(xp,*args); Nfeval=Nfeval+1
-        #print 'yp = ',yp
-        #ym=func(xm,*args); Nfeval=Nfeval+1
-        #print 'ym = ',ym
-        #ghat=(yp-ym)/(2*ck*delta); #print 'ghat = ',ghat
-        print 'k: %d, ym = %f, yp = %f, a = %f'%(k,ym,yp,a)
+        print ('k: %d, ym = %f, yp = %f, a = %f'%(k,ym,yp,a))
         xold=x.copy()
         x=x-ak*ghat
         for m in range(0,Npar):
@@ -93,9 +81,6 @@ def spsa(x0,func,bounds=None,alpha=0.602,gamma=0.101,deltax_0=0.1,a=None,a_min=1
         y=func(x,*args); history.append(list([Nfeval,y])); historyx.append(list(x))#to keep track of convergence history
         mem=numpy.append(mem,numpy.min([ym,yp]))
         mem=numpy.delete(mem,0)
-        #if sqrt(scipy.inner(ghat,ghat)) < gtol:
-            #print 'converged!'
-            #break
         if ym<y_best:
             x_best=xm; #print 'x_best = ',xm
             y_best=ym
@@ -105,31 +90,24 @@ def spsa(x0,func,bounds=None,alpha=0.602,gamma=0.101,deltax_0=0.1,a=None,a_min=1
             y_best=yp
             #a=a/stepredf
         if adaptive_step == True:
-            #if ((yp-y0)>abs(y0)) or ((ym-y0)>abs(y0)):
+            
             if ((y0-min(yp,ym))<0):
-            #if (y0-y_ave)<0:
-            #if (mem.mean()>y0+c) and (numpy.mod(k,memsize)==0):
-                print 'divergence detected. reinitializing.'
+                print ('divergence detected. reinitializing.')
                 redcounter+=1
                 #x=x0.copy()
                 x=x_best.copy()
                 a=stepredf*a
                 if (redcounter > int(0.05*maxiter)) and relaxation:
                 #if (a < a_min) and relaxation:
-                    print "Too many divergence. Resetting a and relaxing threshold!"
+                    print ("Too many divergence. Resetting a and relaxing threshold!")
                     a=a_ini
                     #dim=numpy.random.randint(0,Npar)
                     #x[dim]=numpy.random.uniform(bounds[dim][0],bounds[dim][1])
                     y0=min(yp,ym)
                     redcounter=0
-                #y_max=max(yp,ym)
-                #a=numpy.max([stepredf*a,c])
-                #a=(stepredf+c*numpy.random.randn())*a
                  
-            # if y_ave < y0:
-                # a=a_ini
     y=func(x,*args); Nfeval=Nfeval+1
     history.append(list([Nfeval,y]))
     historyx.append(list(x))
-    print 'number of function evaluation: ',Nfeval
+    print ('number of function evaluation: ',Nfeval)
     return (x,y,history,historyx,Nfeval)
