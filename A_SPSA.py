@@ -1,4 +1,5 @@
 import numpy
+import scipy
 def spsa(x0,func,bounds=None,alpha=0.602,gamma=0.101,deltax_0=0.1,a=None,a_min=1.0e-6,c=1.0e-6,stepredf=0.5,gtol=1.0e-5,graditer=1,memsize=100,IniNfeval=0,maxiter=5000,adaptive_step=True,relaxation=True,dynamic_system=False,*args):
     #INPUT
     #x0: starting input vector (as python list), if dynamic_system=True, append 0 in the list
@@ -23,7 +24,7 @@ def spsa(x0,func,bounds=None,alpha=0.602,gamma=0.101,deltax_0=0.1,a=None,a_min=1
         p=len(x)
         gsum=0.0
         for m in range(niter):
-            delta=scipy.add(2*scipy.floor(scipy.random.uniform(0,2,p)),-1)
+            delta=numpy.add(2*numpy.floor(numpy.random.uniform(0,2,p)),-1)
 
             xp=x+ck*delta
             xm=x-ck*delta
